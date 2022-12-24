@@ -72,7 +72,7 @@ class Code {
                 code += t;
             }
         }
-        System.out.println(code);
+
 
     }
 
