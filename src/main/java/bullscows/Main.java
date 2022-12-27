@@ -114,8 +114,7 @@ public class Main {
         int length;
         System.out.println("Please, enter the secret code's length:");
         length = sc.nextInt();
-        if (length < 1 || length > 10)
-        {
+        if (length < 1 || length > 10) {
             System.out.println("Error: can't generate a secret number with a length of " + length + " because there aren't enough unique digits.");
         }
         return length;
