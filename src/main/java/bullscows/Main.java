@@ -1,9 +1,7 @@
 package bullscows;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 class Code {
     private int CODE_LENGTH;
@@ -12,7 +10,8 @@ class Code {
     Code(int CODE_LENGTH) {
         if (CODE_LENGTH <= 10) {
             this.CODE_LENGTH = CODE_LENGTH;
-            makeCode();
+            this.code=makeCode();
+            System.out.println("The random secret number is " + code);
         } else
             System.out.println("Error: can't generate a secret number with a length of " + CODE_LENGTH + " because there aren't enough unique digits.");
     }
@@ -62,29 +61,12 @@ class Code {
         return num;
     }
 
-    private void makeCode() {
-        String[] arr = generateRandomNumbers();
-        Set<String> usedNums = new HashSet<>();
-        while (usedNums.size() < CODE_LENGTH) {
-            String t = arr[(int) (Math.random() * 10)];
-            if (!usedNums.contains(t)) {
-                usedNums.add(t);
-                code += t;
-            }
-        }
-
-
-    }
-
-    private String[] generateRandomNumbers() {
-        Set<String> set = new HashSet<>();
-        while (set.size() < 10) {
-            double l = Math.random();
-            String s = Double.toString(l).replaceAll("\\.", "");
-            Collections.addAll(set, s.split(""));
-        }
-
-        return set.toArray(new String[10]);
+    private String makeCode() {
+        String [] allChars={"0","1","2","3","4","5","6","7","8","9","a", "b", "c", "d", "e", "f", "g", "h",
+                "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"};
+        String[] neededChars = Arrays.copyOf(allChars, CODE_LENGTH);
+        Collections.shuffle(Arrays.asList(neededChars));
+        return String.join("", neededChars);
     }
 
 }
