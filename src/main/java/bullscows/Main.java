@@ -96,14 +96,14 @@ class Game {
         this.code = code;
     }
 
-    void gameLoop() {
+    void start() {
         String guess;
         System.out.println("Okay, let's start a game!");
         do {
             System.out.println("Turn " + this.getAndIncrementTurn() + ":");
             guess = Main.sc.next();
             System.out.println("Grade: " + code.grade(guess));
-        } while (this.hasNotEnded(guess));
+        } while (hasNotEnded(guess));
         System.out.println("Congrats! The secret code is " + code.getCode());
     }
 
@@ -122,20 +122,32 @@ public class Main {
 
     public static void main(String[] args) {
 
-        int length = getDesiredCodeLength();
-        int allowedCharacters = getNumberOfAllowedCharacters();
-        Code code = new Code(length, allowedCharacters);
-        Game game = new Game(code);
+        int length;
+        int allowedCharacters;
+        try {
+            length = getDesiredCodeLength();
+            allowedCharacters = getNumberOfAllowedCharacters();
+            if(allowedCharacters>36) System.out.println("Error: maximum number of possible symbols" +
+                    " in the code is 36 (0-9, a-z).");
+            else if (allowedCharacters<length) System.out.println("Error: it's not possible to generate a code with a length of "+length+" with "+allowedCharacters+" unique symbols.");
+            else {
+                Code code = new Code(length, allowedCharacters);
+                Game game = new Game(code);
 
-        game.gameLoop();
+                game.start();
+            }
+        } catch (Exception e) {
+            System.out.println("Error, invalid number");
+        }
+
     }
 
     private static int getDesiredCodeLength() {
         int length;
         System.out.println("Please, enter the secret code's length:");
         length = sc.nextInt();
-        if (length < 1 || length > 10) {
-            System.out.println("Error: can't generate a secret number with a length of " + length + " because there aren't enough unique digits.");
+        if (length < 1 ) {
+            throw new RuntimeException();
         }
         return length;
     }
