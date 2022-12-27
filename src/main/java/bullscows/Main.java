@@ -1,19 +1,16 @@
 package bullscows;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Scanner;
 
 class Code {
-    private int CODE_LENGTH;
-    private String code = "";
+    private final int CODE_LENGTH;
+    private final String code;
 
     Code(int CODE_LENGTH) {
-        if (CODE_LENGTH <= 10) {
-            this.CODE_LENGTH = CODE_LENGTH;
-            this.code=makeCode();
-            System.out.println("The random secret number is " + code);
-        } else
-            System.out.println("Error: can't generate a secret number with a length of " + CODE_LENGTH + " because there aren't enough unique digits.");
+        this.CODE_LENGTH = CODE_LENGTH;
+        this.code = makeCode();
     }
 
 
@@ -32,15 +29,9 @@ class Code {
         }
 
 
-        return buildResult(res);
+        if (!res.isEmpty()) return res;
+        return "None";
 
-    }
-
-    private String buildResult(String res) {
-        String s = ". The secret code is " + code + ".";
-
-        if (!res.isEmpty()) return res + s;
-        return "None" + s;
     }
 
     private int calculateBulls(String input) {
@@ -62,17 +53,44 @@ class Code {
     }
 
     private String makeCode() {
-        String [] allChars={"0","1","2","3","4","5","6","7","8","9","a", "b", "c", "d", "e", "f", "g", "h",
+        String[] allChars = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h",
                 "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"};
         String[] neededChars = Arrays.copyOf(allChars, CODE_LENGTH);
         Collections.shuffle(Arrays.asList(neededChars));
         return String.join("", neededChars);
     }
 
+    public String getCode() {
+        return code;
+    }
+
+    public int getCODE_LENGTH() {
+        return CODE_LENGTH;
+    }
 }
 
 class Game {
-    private static int turn = 1;
+    private final Code code;
+    private int turn = 1;
+
+    public Game(Code code) {
+        this.code = code;
+    }
+
+    void gameLoop() {
+        String guess;
+        System.out.println("Okay, let's start a game!");
+        do {
+            System.out.println("Turn " + this.getAndIncrementTurn() + ":");
+            guess = Main.sc.next();
+            System.out.println("Grade: " + code.grade(guess));
+        } while (this.hasNotEnded(guess));
+        System.out.println("Congrats! The secret code is " + code.getCode());
+    }
+
+    public boolean hasNotEnded(String guess) {
+        return !code.grade(guess).equals(code.getCODE_LENGTH() + " bull(s)");
+    }
 
     public int getAndIncrementTurn() {
         return turn++;
@@ -80,20 +98,26 @@ class Game {
 }
 
 public class Main {
+    static Scanner sc = new Scanner(System.in);
 
 
     public static void main(String[] args) {
 
-        Scanner sc = new Scanner(System.in);
-        int input = sc.nextInt();
+        int length = getDesiredCodeLength();
+        Code code = new Code(length);
+        Game game = new Game(code);
 
-        Game game = new Game();
-        Code code = new Code(input);
+        game.gameLoop();
+    }
 
-        //System.out.println("The secret code is prepared: ****.");
-
-        //System.out.println(code.grade(input));
-
-        //System.out.println("Congrats! The secret code is 9876.");
+    private static int getDesiredCodeLength() {
+        int length;
+        System.out.println("Please, enter the secret code's length:");
+        length = sc.nextInt();
+        if (length < 1 || length > 10)
+        {
+            System.out.println("Error: can't generate a secret number with a length of " + length + " because there aren't enough unique digits.");
+        }
+        return length;
     }
 }
