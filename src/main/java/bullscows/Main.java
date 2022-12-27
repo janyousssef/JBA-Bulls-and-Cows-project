@@ -4,13 +4,31 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Scanner;
 
+import static java.lang.Math.min;
+
 class Code {
+    private final int DIGITS_ALLOWED;
     private final int CODE_LENGTH;
     private final String code;
 
-    Code(int CODE_LENGTH) {
+    Code(int CODE_LENGTH, int DIGITS_ALLOWED) {
         this.CODE_LENGTH = CODE_LENGTH;
+        this.DIGITS_ALLOWED = DIGITS_ALLOWED;
         this.code = makeCode();
+        System.out.println(creationMessage());
+    }
+
+    private String creationMessage() {
+        StringBuilder s = new StringBuilder("The secret is prepared: ");
+        s.append("*".repeat(CODE_LENGTH));
+        s.append(" (0-").append(min(DIGITS_ALLOWED - 1,9));
+
+        if(DIGITS_ALLOWED>10) {
+            s.append(", a-").append((char)('a'+DIGITS_ALLOWED-11));
+        }
+
+        s.append(").");
+        return s.toString();
     }
 
 
@@ -27,7 +45,6 @@ class Code {
             if (!res.isEmpty()) res += " and ";
             res += cows + " cows(s)";
         }
-
 
 
         if (!res.isEmpty()) return res;
@@ -56,8 +73,9 @@ class Code {
     private String makeCode() {
         String[] allChars = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h",
                 "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"};
-        String[] neededChars = Arrays.copyOf(allChars, CODE_LENGTH);
+        String[] neededChars = Arrays.copyOf(allChars, DIGITS_ALLOWED);
         Collections.shuffle(Arrays.asList(neededChars));
+        neededChars = Arrays.copyOf(neededChars, CODE_LENGTH);
         return String.join("", neededChars);
     }
 
@@ -105,7 +123,8 @@ public class Main {
     public static void main(String[] args) {
 
         int length = getDesiredCodeLength();
-        Code code = new Code(length);
+        int allowedCharacters = getNumberOfAllowedCharacters();
+        Code code = new Code(length, allowedCharacters);
         Game game = new Game(code);
 
         game.gameLoop();
@@ -118,6 +137,13 @@ public class Main {
         if (length < 1 || length > 10) {
             System.out.println("Error: can't generate a secret number with a length of " + length + " because there aren't enough unique digits.");
         }
+        return length;
+    }
+
+    private static int getNumberOfAllowedCharacters() {
+        int length;
+        System.out.println("Input the number of possible symbols in the code:");
+        length = sc.nextInt();
         return length;
     }
 }
